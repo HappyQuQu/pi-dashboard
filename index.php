@@ -1,5 +1,5 @@
 <?php
-require_once(dirname(__FILE__) . DIRECTORY_SEPARATOR . 'device.php');
+require_once dirname(__FILE__) . DIRECTORY_SEPARATOR . 'device.php';
 ?>
 <html>
 <head>
@@ -18,7 +18,7 @@ require_once(dirname(__FILE__) . DIRECTORY_SEPARATOR . 'device.php');
     <script language="JavaScript">
         window.dashboard_old = null;
         window.dashboard = null;
-        var init_vals = eval('('+"{'mem': {'total':<?php echo($D['mem']['total']) ?>,'swap':{'total':<?php echo($D['mem']['swap']['total']) ?>}}, 'disk': {'total':<?php echo($D['disk']['total']) ?>}, 'net': { 'count': <?php echo($D['net']['count']) ?>} }"+')');
+        var init_vals = eval('('+"{'mem': {'total':<?php echo($D['mem']['total']) ?>,'swap':{'total':<?php echo($D['mem']['swap']['total']) ?>}}, 'disk': {'total':<?php echo($D['disk']['total']) ?>},'disk_media': {'total':<?php echo($D['disk_media']['total']) ?>},'disk_pt': {'total':<?php echo($D['disk_pt']['total']) ?>}, 'net': { 'count': <?php echo($D['net']['count']) ?>} }"+')');
     </script>
     <style type="text/css">
         .label {color: #999999; font-size: 75%; font-weight: bolder;}
@@ -77,7 +77,7 @@ require_once(dirname(__FILE__) . DIRECTORY_SEPARATOR . 'device.php');
                             <div class="row" style="margin: 0; background-color:#E0E0E0;">
                                 <div class="text-center" style="padding: 2px 0 2px 0; background-color: #CDFD9F;"><strong><small>CPU</small></strong></div>
                                 <div class="col-md-3 col-sm-3 col-xs-3" style="padding: 0;">
-                                    <div class="text-center" style="padding: 10px 0 10px 0; background-color:#FFFECD;"><span id="cpu-freq" style="font-weight: bolder;"><?php echo($D['cpu']['freq']/1000) ?></span><br /><small class="label">MHz</small></div>
+                                    <div class="text-center" style="padding: 10px 0 10px 0; background-color:#FFFECD;"><span id="cpu-freq" style="font-weight: bolder;"><?php echo($D['cpu']['freq'] / 1000) ?></span><br /><small class="label">MHz</small></div>
                                 </div>
                                 <div class="col-md-3 col-sm-3 col-xs-3" style="padding: 0;">
                                     <div class="text-center" style="padding: 10px 0 10px 0;"><span id="cpu-count"><?php echo($D['cpu']['count']) ?></span><br /><small class="label">CORE</small></div>
@@ -141,89 +141,195 @@ require_once(dirname(__FILE__) . DIRECTORY_SEPARATOR . 'device.php');
                         </div>
                     </div>
                 </div>
-
                 <div class="row">
-                    <div class="col-md-3 col-sm-3 col-xs-6">
-                        <div id="container-cache" style="width: 100%; height: 100px;"></div>
-                        <div style="height: 90px;">
-                            <div class="row" style="margin: 0; background-color:#E0E0E0;">
-                                <div class="text-center" style="padding: 2px 0 2px 0; background-color: #CEFFFF;"><strong><small>CACHE</small></strong></div>
-                                <div class="col-md-6 col-sm-6 col-xs-6" style="padding: 0;">
-                                    <div class="text-center" style="padding: 10px 0 10px 0;"><span id="mem-cache-percent">0</span>%<br /><small class="label">USED</small></div>
+                        <div class="col-md-3 col-sm-3 col-xs-6">
+                            <div id="container-disk" style="width: 100%; height: 100px;"></div>
+                            <div style="height: 90px;">
+                                <div class="row" style="margin: 0; background-color:#E0E0E0;">
+                                    <div class="text-center" style="padding: 2px 0 2px 0; background-color: #9BCEFD;">
+                                        <strong><small>SD Card</small></strong></div>
+                                    <div class="col-md-6 col-sm-6 col-xs-6" style="padding: 0;">
+                                        <div class="text-center" style="padding: 10px 0 10px 0;"><span
+                                                id="disk-percent">0</span>%<br /><small class="label">USED</small></div>
+                                    </div>
+                                    <div class="col-md-6 col-sm-6 col-xs-6"
+                                        style="padding: 0; background-color:#9BCEFD;">
+                                        <div class="text-center" style="padding: 10px 0 10px 0;"><span
+                                                id="disk-free">0</span>GB<br /><small class="label">FREE</small></div>
+                                    </div>
                                 </div>
-                                <div class="col-md-6 col-sm-6 col-xs-6" style="padding: 0; background-color:#CEFFFF;">
-                                    <div class="text-center" style="padding: 10px 0 10px 0;"><span id="mem-buffers">0</span>MB<br /><small class="label">BUFFERS</small></div>
+                            </div>
+                        </div>
+                        <div class="col-md-3 col-sm-3 col-xs-6">
+                            <div id="container-cache" style="width: 100%; height: 100px;"></div>
+                            <div style="height: 90px;">
+                                <div class="row" style="margin: 0; background-color:#E0E0E0;">
+                                    <div class="text-center" style="padding: 2px 0 2px 0; background-color: #CEFFFF;">
+                                        <strong><small>CACHE</small></strong></div>
+                                    <div class="col-md-6 col-sm-6 col-xs-6" style="padding: 0;">
+                                        <div class="text-center" style="padding: 10px 0 10px 0;"><span
+                                                id="mem-cache-percent">0</span>%<br /><small class="label">USED</small>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6 col-sm-6 col-xs-6"
+                                        style="padding: 0; background-color:#CEFFFF;">
+                                        <div class="text-center" style="padding: 10px 0 10px 0;"><span
+                                                id="mem-buffers">0</span>MB<br /><small class="label">BUFFERS</small>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3 col-sm-3 col-xs-6">
+                            <div id="container-mem-real" style="width: 100%; height: 100px;"></div>
+                            <div style="height: 90px;">
+                                <div class="row" style="margin: 0; background-color:#E0E0E0;">
+                                    <div class="text-center" style="padding: 2px 0 2px 0; background-color: #CDFD9F;">
+                                        <strong><small>REAL MEMORY</small></strong></div>
+                                    <div class="col-md-6 col-sm-6 col-xs-6" style="padding: 0;">
+                                        <div class="text-center" style="padding: 10px 0 10px 0;"><span
+                                                id="mem-real-percent">0</span>%<br /><small class="label">USED</small>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6 col-sm-6 col-xs-6"
+                                        style="padding: 0; background-color:#CDFD9F;">
+                                        <div class="text-center" style="padding: 10px 0 10px 0;"><span
+                                                id="mem-real-free">0</span>MB<br /><small class="label">FREE</small>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3 col-sm-3 col-xs-6">
+                            <div id="container-swap" style="width: 100%; height: 100px;"></div>
+                            <div style="height: 90px;">
+                                <div class="row" style="margin: 0; background-color:#E0E0E0;">
+                                    <div class="text-center" style="padding: 2px 0 2px 0; background-color: #CCCDFC;">
+                                        <strong><small>SWAP</small></strong></div>
+                                    <div class="col-md-6 col-sm-6 col-xs-6" style="padding: 0;">
+                                        <div class="text-center" style="padding: 10px 0 10px 0;"><span
+                                                id="mem-swap-percent">0</span>%<br /><small class="label">USED</small>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6 col-sm-6 col-xs-6"
+                                        style="padding: 0; background-color:#CCCDFC;">
+                                        <div class="text-center" style="padding: 10px 0 10px 0;"><span
+                                                id="mem-swap-free">0</span>MB<br /><small class="label">FREE</small>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 col-sm-6 col-xs-12">
+                            <div id="container-disk-media" style="width: 100%; height: 100px;"></div>
+                            <div style="height: 90px;">
+                                <div class="row" style="margin: 0; background-color:#E0E0E0;">
+                                    <div class="text-center" style="padding: 2px 0 2px 0; background-color: #9BCEFD;">
+                                        <strong><small>Media</small></strong></div>
+                                    <div class="col-md-12 col-sm-12 col-xs-12"
+                                        style="padding: 0; background-color: #bee4fd;">
+                                        <div class="text-center" style="padding: 10px 0 10px 0;"><span
+                                                id="disk-media-total">0</span>GB<br /><small class="label">TOTAL</small>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-6 col-sm-6 col-xs-6"
+                                        style="padding: 0; background-color: #FDCCCB;">
+                                        <div class="text-center" style="padding: 10px 0 10px 0;"><span
+                                                id="disk-media-used">0</span>GB<br /><small class="label">USED</small>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6 col-sm-6 col-xs-6"
+                                        style="padding: 0;background-color:#FDCCCB;">
+                                        <div class="text-center" style="padding: 10px 0 10px 0;"><span
+                                                id="disk-media-used-percent">0</span>%<br /><small
+                                                class="label">USED</small></div>
+                                    </div>
+                                    <div class="col-md-6 col-sm-6 col-xs-6"
+                                        style="padding: 0; background-color:#CDFD9F;">
+                                        <div class="text-center" style="padding: 10px 0 10px 0;"><span
+                                                id="disk-media-free">0</span>GB<br /><small class="label">FREE</small>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-6 col-sm-6 col-xs-6"
+                                        style="padding: 0; background-color:#CDFD9F;">
+                                        <div class="text-center" style="padding: 10px 0 10px 0;"><span
+                                                id="disk-media-free-percent">0</span>%<br /><small
+                                                class="label">FREE</small></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 col-sm-6 col-xs-12">
+                            <div id="container-disk-pt" style="width: 100%; height: 100px;"></div>
+                            <div style="height: 90px;">
+                                <div class="row" style="margin: 0; background-color:#E0E0E0;">
+                                    <div class="text-center" style="padding: 2px 0 2px 0; background-color: #9BCEFD;">
+                                        <strong><small>PT</small></strong></div>
+                                    <div class="col-md-12 col-sm-12 col-xs-12"
+                                        style="padding: 0; background-color: #bee4fd;">
+                                        <div class="text-center" style="padding: 10px 0 10px 0;"><span
+                                                id="disk-pt-total">0</span>GB<br /><small class="label">TOTAL</small>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-6 col-sm-6 col-xs-6"
+                                        style="padding: 0; background-color: #FDCCCB;">
+                                        <div class="text-center" style="padding: 10px 0 10px 0;"><span
+                                                id="disk-pt-used">0</span>GB<br /><small class="label">USED</small>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6 col-sm-6 col-xs-6"
+                                        style="padding: 0;background-color:#FDCCCB;">
+                                        <div class="text-center" style="padding: 10px 0 10px 0;"><span
+                                                id="disk-pt-used-percent">0</span>%<br /><small
+                                                class="label">USED</small></div>
+                                    </div>
+                                    <div class="col-md-6 col-sm-6 col-xs-6"
+                                        style="padding: 0; background-color:#CDFD9F;">
+                                        <div class="text-center" style="padding: 10px 0 10px 0;"><span
+                                                id="disk-pt-free">0</span>GB<br /><small class="label">FREE</small>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-6 col-sm-6 col-xs-6"
+                                        style="padding: 0; background-color:#CDFD9F;">
+                                        <div class="text-center" style="padding: 10px 0 10px 0;"><span
+                                                id="disk-pt-free-percent">0</span>%<br /><small
+                                                class="label">FREE</small></div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                    <div class="col-md-3 col-sm-3 col-xs-6">
-                        <div id="container-mem-real" style="width: 100%; height: 100px;"></div>
-                        <div style="height: 90px;">
-                            <div class="row" style="margin: 0; background-color:#E0E0E0;">
-                                <div class="text-center" style="padding: 2px 0 2px 0; background-color: #CDFD9F;"><strong><small>REAL MEMORY</small></strong></div>
-                                <div class="col-md-6 col-sm-6 col-xs-6" style="padding: 0;">
-                                    <div class="text-center" style="padding: 10px 0 10px 0;"><span id="mem-real-percent">0</span>%<br /><small class="label">USED</small></div>
-                                </div>
-                                <div class="col-md-6 col-sm-6 col-xs-6" style="padding: 0; background-color:#CDFD9F;">
-                                    <div class="text-center" style="padding: 10px 0 10px 0;"><span id="mem-real-free">0</span>MB<br /><small class="label">FREE</small></div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-3 col-sm-3 col-xs-6">
-                        <div id="container-swap" style="width: 100%; height: 100px;"></div>
-                        <div style="height: 90px;">
-                            <div class="row" style="margin: 0; background-color:#E0E0E0;">
-                                <div class="text-center" style="padding: 2px 0 2px 0; background-color: #CCCDFC;"><strong><small>SWAP</small></strong></div>
-                                <div class="col-md-6 col-sm-6 col-xs-6" style="padding: 0;">
-                                    <div class="text-center" style="padding: 10px 0 10px 0;"><span id="mem-swap-percent">0</span>%<br /><small class="label">USED</small></div>
-                                </div>
-                                <div class="col-md-6 col-sm-6 col-xs-6" style="padding: 0; background-color:#CCCDFC;">
-                                    <div class="text-center" style="padding: 10px 0 10px 0;"><span id="mem-swap-free">0</span>MB<br /><small class="label">FREE</small></div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-3 col-sm-3 col-xs-6">
-                        <div id="container-disk" style="width: 100%; height: 100px;"></div>
-                        <div style="height: 90px;">
-                            <div class="row" style="margin: 0; background-color:#E0E0E0;">
-                                <div class="text-center" style="padding: 2px 0 2px 0; background-color: #9BCEFD;"><strong><small>DISK</small></strong></div>
-                                <div class="col-md-6 col-sm-6 col-xs-6" style="padding: 0;">
-                                    <div class="text-center" style="padding: 10px 0 10px 0;"><span id="disk-percent">0</span>%<br /><small class="label">USED</small></div>
-                                </div>
-                                <div class="col-md-6 col-sm-6 col-xs-6" style="padding: 0; background-color:#9BCEFD;">
-                                    <div class="text-center" style="padding: 10px 0 10px 0;"><span id="disk-free">0</span>GB<br /><small class="label">FREE</small></div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+
 
 
                 <div class="row">
                     <div class="col-md-12">
                         <?php
-                        for($i = 0; $i<$D['net']['count'];$i++)
-                        {
-                            ?>
+for ($i = 0; $i < $D['net']['count']; $i++) {
+    ?>
                             <div class="row" style="margin: 0;">
                                 <div class="col-md-10 col-sm-10 col-xs-10" style="padding: 0;">
-                                    <div id="container-net-interface-<?php echo($i+1) ?>" style="min-width: 100%; height: 150px; margin: 20 auto"></div>
+                                    <div id="container-net-interface-<?php echo($i + 1) ?>" style="min-width: 100%; height: 150px; margin: 20 auto"></div>
                                 </div>
                                 <div class="col-md-2 col-sm-2 col-xs-2" style="padding: 0;">
                                     <div style="height: 80px; margin-top: 10px;">
-                                        <div class="text-center" style="padding: 2px 0 2px 0; background-color: #CCCCCC;"><strong><span id="net-interface-<?php echo($i+1) ?>-name"><?php echo($D['net']['interfaces'][$i]['name']) ?></span></strong></div>
-                                        <div class="text-center" style="padding: 10px 0 10px 0; background-color: #9BCEFD;"><span id="net-interface-<?php echo($i+1) ?>-total-in"><?php echo($D['net']['interfaces'][$i]['total_in']) ?></span><br /><small class="label">IN</small></div>
-                                        <div class="text-center" style="padding: 10px 0 10px 0; background-color: #CDFD9F;"><span id="net-interface-<?php echo($i+1) ?>-total-out"><?php echo($D['net']['interfaces'][$i]['total_out']) ?></span><br /><small class="label">OUT</small></div>
+                                        <div class="text-center" style="padding: 2px 0 2px 0; background-color: #CCCCCC;"><strong><span id="net-interface-<?php echo($i + 1) ?>-name"><?php echo($D['net']['interfaces'][$i]['name']) ?></span></strong></div>
+                                        <div class="text-center" style="padding: 10px 0 10px 0; background-color: #9BCEFD;"><span id="net-interface-<?php echo($i + 1) ?>-total-in"><?php echo($D['net']['interfaces'][$i]['total_in']) ?></span><br /><small class="label">IN</small></div>
+                                        <div class="text-center" style="padding: 10px 0 10px 0; background-color: #CDFD9F;"><span id="net-interface-<?php echo($i + 1) ?>-total-out"><?php echo($D['net']['interfaces'][$i]['total_out']) ?></span><br /><small class="label">OUT</small></div>
                                     </div>
                                 </div>
                             </div>
 
                         <?php
-                        }
-                        ?>
+}
+?>
                     </div>
                 </div>
             </div>
@@ -243,6 +349,6 @@ require_once(dirname(__FILE__) . DIRECTORY_SEPARATOR . 'device.php');
         </div>
     </div>
 </div>
-<script src="assets/dashboard.min.js"></script>
+<script src="assets/dashboard.js"></script>
 </body>
 </html>

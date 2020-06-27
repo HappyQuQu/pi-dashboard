@@ -164,6 +164,17 @@ function get_info(){
     $D['disk']['used'] = $D['disk']['total'] - $D['disk']['free'];
     $D['disk']['percent'] = (floatval($D['disk']['total'])!=0)?round($D['disk']['used']/$D['disk']['total']*100,2):0;
 
+    $D['disk_media']['total'] = round(@disk_total_space("/home/pi/media")/(1024*1024*1024),3);
+    $D['disk_media']['free'] = round(@disk_free_space("/home/pi/media")/(1024*1024*1024),3);
+    $D['disk_media']['free_percent'] = (floatval($D['disk_media']['total'])!=0)?round($D['disk_media']['free']/$D['disk_media']['total']*100,2):0;
+    $D['disk_media']['used'] = $D['disk_media']['total'] - $D['disk_media']['free'];
+    $D['disk_media']['used_percent'] = (floatval($D['disk_media']['total'])!=0)?round($D['disk_media']['used']/$D['disk_media']['total']*100,2):0;
+    
+    $D['disk_pt']['total'] = round(@disk_total_space("/home/pi/pt")/(1024*1024*1024),3);
+    $D['disk_pt']['free'] = round(@disk_free_space("/home/pi/pt")/(1024*1024*1024),3);
+    $D['disk_pt']['free_percent'] = (floatval($D['disk_pt']['total'])!=0)?round($D['disk_pt']['free']/$D['disk_pt']['total']*100,2):0;
+    $D['disk_pt']['used'] = $D['disk_pt']['total'] - $D['disk_pt']['free'];
+    $D['disk_pt']['used_percent'] = (floatval($D['disk_pt']['total'])!=0)?round($D['disk_pt']['used']/$D['disk_pt']['total']*100,2):0;
 
     if (($strs = @file("/proc/net/dev")) !== false){
         $D['net']['count'] = count($strs) - 2;

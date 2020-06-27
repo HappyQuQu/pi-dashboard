@@ -3,7 +3,7 @@
  * Copyright 2017 NXEZ.com.
  * Licensed under the GPL v3.0 license.
  */
-$(document).ready(function() {
+$(document).ready(function () {
     Highcharts.setOptions({
         global: {
             useUTC: false
@@ -217,13 +217,60 @@ $(document).ready(function() {
 
     }));
 
+    var chartDiskMedia = Highcharts.chart('container-disk-media', Highcharts.merge(gaugeOptions, {
+        yAxis: {
+            min: 0,
+            max: init_vals.disk_media.total,
+            title: {
+                text: ''
+            }
+        },
+
+        series: [{
+            name: 'DISK',
+            data: [0],
+            dataLabels: {
+                format: '<div style="text-align:center"><span style="font-size:12px;color:' +
+                    ((Highcharts.theme && Highcharts.theme.contrastTextColor) || 'black') + '">{y:.1f}</span><br/>' +
+                    '<span style="font-size:10px;color:silver">GB</span></div>'
+            },
+            tooltip: {
+                valueSuffix: ' GB'
+            }
+        }]
+
+    }));
+
+    var chartDiskPT = Highcharts.chart('container-disk-pt', Highcharts.merge(gaugeOptions, {
+        yAxis: {
+            min: 0,
+            max: init_vals.disk_pt.total,
+            title: {
+                text: ''
+            }
+        },
+
+        series: [{
+            name: 'DISK',
+            data: [0],
+            dataLabels: {
+                format: '<div style="text-align:center"><span style="font-size:12px;color:' +
+                    ((Highcharts.theme && Highcharts.theme.contrastTextColor) || 'black') + '">{y:.1f}</span><br/>' +
+                    '<span style="font-size:10px;color:silver">GB</span></div>'
+            },
+            tooltip: {
+                valueSuffix: ' GB'
+            }
+        }]
+
+    }));
+
 
     var chartNetInterfaces = new Array();
     var net_In = new Array();
     var net_Out = new Array();
-    for(i=0;i<init_vals.net.count;i++)
-    {
-        var chartNetInterface = Highcharts.chart('container-net-interface-'+(i+1), {
+    for (i = 0; i < init_vals.net.count; i++) {
+        var chartNetInterface = Highcharts.chart('container-net-interface-' + (i + 1), {
             title: {
                 text: ''
             },
@@ -264,13 +311,13 @@ $(document).ready(function() {
             ]
         });
         chartNetInterfaces[i] = chartNetInterface;
-        net_In[i] = [0,0,0,0,0,0,0,0,0,0];
-        net_Out[i] = [0,0,0,0,0,0,0,0,0,0];
+        net_In[i] = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+        net_Out[i] = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
     }
 
-    setInterval(function() {
+    setInterval(function () {
 
-        $.getJSON('?ajax=true', function(data){
+        $.getJSON('?ajax=true', function (data) {
 
             //console.log(data);
             var newDate = new Date();
@@ -279,7 +326,7 @@ $(document).ready(function() {
             $("#time").text(newDate.format('hh:mm:ss'));
             $("#date").text(newDate.format('yyyy-MM-dd'));
             $("#uptime").text(uptimeFormat(data.uptime));
-            $("#cpu-temp").text(Math.round(data.cpu.temp/1000 * Math.pow(10,1))/Math.pow(10,1));
+            $("#cpu-temp").text(Math.round(data.cpu.temp / 1000 * Math.pow(10, 1)) / Math.pow(10, 1));
             $("#mem-percent").text(data.mem.percent);
             $("#mem-free").text(data.mem.free);
             $("#mem-cached").text(data.mem.cached);
@@ -292,6 +339,16 @@ $(document).ready(function() {
             $("#mem-swap-free").text(data.mem.swap.free);
             $("#disk-percent").text(data.disk.percent);
             $("#disk-free").text(data.disk.free);
+            $("#disk-media-total").text(data.disk_media.total);
+            $("#disk-media-free").text(data.disk_media.free)
+            $("#disk-media-free-percent").text(data.disk_media.free_percent)
+            $("#disk-media-used").text(data.disk_media.used)
+            $("#disk-media-used-percent").text(data.disk_media.used_percent)
+            $("#disk-pt-total").text(data.disk_pt.total);
+            $("#disk-pt-free").text(data.disk_pt.free)
+            $("#disk-pt-free-percent").text(data.disk_pt.free_percent)
+            $("#disk-pt-used").text(data.disk_pt.used)
+            $("#disk-pt-used-percent").text(data.disk_pt.used_percent)
             $("#loadavg-1m").text(data.load_avg[0]);
             $("#loadavg-5m").text(data.load_avg[1]);
             $("#loadavg-10m").text(data.load_avg[2]);
@@ -299,15 +356,13 @@ $(document).ready(function() {
             $("#loadavg-threads").text(data.load_avg[3].split("/")[1]);
 
 
-            for(i=0;i<data.net.count;i++)
-            {
-                $("#net-interface-"+(i+1)+"-total-in").text(bytesRound(parseInt(data.net.interfaces[i].total_in), 2));
-                $("#net-interface-"+(i+1)+"-total-out").text(bytesRound(parseInt(data.net.interfaces[i].total_out), 2));
+            for (i = 0; i < data.net.count; i++) {
+                $("#net-interface-" + (i + 1) + "-total-in").text(bytesRound(parseInt(data.net.interfaces[i].total_in), 2));
+                $("#net-interface-" + (i + 1) + "-total-out").text(bytesRound(parseInt(data.net.interfaces[i].total_out), 2));
             }
 
 
-            if(window.dashboard != null)
-            {
+            if (window.dashboard != null) {
                 window.dashboard_old = window.dashboard;
             }
 
@@ -315,7 +370,7 @@ $(document).ready(function() {
 
         });
 
-        if(window.dashboard != null){
+        if (window.dashboard != null) {
             //console.log(window.dashboard);
 
             // Speed
@@ -353,25 +408,32 @@ $(document).ready(function() {
                  point.update(newVal);
                  */
             }
+            if (chartDiskMedia) {
+                point = chartDiskMedia.series[0].points[0];
+                point.update(window.dashboard.disk_media.used);
 
-            if(window.dashboard_old != null)
-            {
+            }
+            if (chartDiskPT) {
+                point = chartDiskPT.series[0].points[0];
+                point.update(window.dashboard.disk_pt.used);
+
+            }
+
+            if (window.dashboard_old != null) {
                 //console.log(window.dashboard_old.net.count);
-                if(window.dashboard_old.net.count > 0)
-                {
-                    for(i=0;i<window.dashboard_old.net.count;i++)
-                    {
-                        if(chartNetInterfaces[i].series[0].data.length >=30){
+                if (window.dashboard_old.net.count > 0) {
+                    for (i = 0; i < window.dashboard_old.net.count; i++) {
+                        if (chartNetInterfaces[i].series[0].data.length >= 30) {
                             chartNetInterfaces[i].series[0].addPoint(parseInt(window.dashboard.net.interfaces[i].total_in) - parseInt(window.dashboard_old.net.interfaces[i].total_in), true, true);
                         }
-                        else{
+                        else {
                             chartNetInterfaces[i].series[0].addPoint(parseInt(window.dashboard.net.interfaces[i].total_in) - parseInt(window.dashboard_old.net.interfaces[i].total_in));
                         }
 
-                        if(chartNetInterfaces[i].series[1].data.length >=30){
+                        if (chartNetInterfaces[i].series[1].data.length >= 30) {
                             chartNetInterfaces[i].series[1].addPoint(parseInt(window.dashboard.net.interfaces[i].total_out) - parseInt(window.dashboard_old.net.interfaces[i].total_out), true, true);
                         }
-                        else{
+                        else {
                             chartNetInterfaces[i].series[1].addPoint(parseInt(window.dashboard.net.interfaces[i].total_out) - parseInt(window.dashboard_old.net.interfaces[i].total_out));
                         }
                     }
@@ -395,17 +457,17 @@ $(document).ready(function() {
 
                 if (chartCPU) {
                     point = chartCPU.series[0].points[0];
-                    point.update(Math.round((1.0 - (idle_diff / used_total)) * 100 * Math.pow(10,1))/Math.pow(10,1));
+                    point.update(Math.round((1.0 - (idle_diff / used_total)) * 100 * Math.pow(10, 1)) / Math.pow(10, 1));
                 }
 
                 $("#cpu-freq").text(window.dashboard.cpu.freq / 1000);
-                $("#cpu-stat-idl").text(Math.round(((parseInt(window.dashboard.cpu.stat.idle) - parseInt(window.dashboard_old.cpu.stat.idle)) / used_total) * 100 * Math.pow(10,1))/Math.pow(10,1));
-                $("#cpu-stat-use").text(Math.round(((parseInt(window.dashboard.cpu.stat.user) - parseInt(window.dashboard_old.cpu.stat.user)) / used_total) * 100 * Math.pow(10,1))/Math.pow(10,1));
-                $("#cpu-stat-sys").text(Math.round(((parseInt(window.dashboard.cpu.stat.sys) - parseInt(window.dashboard_old.cpu.stat.sys)) / used_total) * 100 * Math.pow(10,1))/Math.pow(10,1));
-                $("#cpu-stat-nic").text(Math.round(((parseInt(window.dashboard.cpu.stat.nice) - parseInt(window.dashboard_old.cpu.stat.nice)) / used_total) * 100 * Math.pow(10,1))/Math.pow(10,1));
-                $("#cpu-stat-iow").text(Math.round(((parseInt(window.dashboard.cpu.stat.iowait) - parseInt(window.dashboard_old.cpu.stat.iowait)) / used_total) * 100 * Math.pow(10,1))/Math.pow(10,1));
-                $("#cpu-stat-irq").text(Math.round(((parseInt(window.dashboard.cpu.stat.irq) - parseInt(window.dashboard_old.cpu.stat.irq)) / used_total) * 100 * Math.pow(10,1))/Math.pow(10,1));
-                $("#cpu-stat-sirq").text(Math.round(((parseInt(window.dashboard.cpu.stat.softirq) - parseInt(window.dashboard_old.cpu.stat.softirq)) / used_total) * 100 * Math.pow(10,1))/Math.pow(10,1));
+                $("#cpu-stat-idl").text(Math.round(((parseInt(window.dashboard.cpu.stat.idle) - parseInt(window.dashboard_old.cpu.stat.idle)) / used_total) * 100 * Math.pow(10, 1)) / Math.pow(10, 1));
+                $("#cpu-stat-use").text(Math.round(((parseInt(window.dashboard.cpu.stat.user) - parseInt(window.dashboard_old.cpu.stat.user)) / used_total) * 100 * Math.pow(10, 1)) / Math.pow(10, 1));
+                $("#cpu-stat-sys").text(Math.round(((parseInt(window.dashboard.cpu.stat.sys) - parseInt(window.dashboard_old.cpu.stat.sys)) / used_total) * 100 * Math.pow(10, 1)) / Math.pow(10, 1));
+                $("#cpu-stat-nic").text(Math.round(((parseInt(window.dashboard.cpu.stat.nice) - parseInt(window.dashboard_old.cpu.stat.nice)) / used_total) * 100 * Math.pow(10, 1)) / Math.pow(10, 1));
+                $("#cpu-stat-iow").text(Math.round(((parseInt(window.dashboard.cpu.stat.iowait) - parseInt(window.dashboard_old.cpu.stat.iowait)) / used_total) * 100 * Math.pow(10, 1)) / Math.pow(10, 1));
+                $("#cpu-stat-irq").text(Math.round(((parseInt(window.dashboard.cpu.stat.irq) - parseInt(window.dashboard_old.cpu.stat.irq)) / used_total) * 100 * Math.pow(10, 1)) / Math.pow(10, 1));
+                $("#cpu-stat-sirq").text(Math.round(((parseInt(window.dashboard.cpu.stat.softirq) - parseInt(window.dashboard_old.cpu.stat.softirq)) / used_total) * 100 * Math.pow(10, 1)) / Math.pow(10, 1));
             }
         }
 
@@ -418,29 +480,28 @@ $(document).ready(function() {
 });
 
 
-function bytesRound(number, round)
-{
-    if (number<0){
-        var last=0+"B";
-    }else if (number<1024){
+function bytesRound(number, round) {
+    if (number < 0) {
+        var last = 0 + "B";
+    } else if (number < 1024) {
         //var last=Math.round(number*Math.pow(10,round))/Math.pow(10,round)+"B";
-        var last=number+"B";
-    }else if (number<1048576){
-        number=number/1024;
-        var last=Math.round(number*Math.pow(10,round))/Math.pow(10,round)+"K";
-    }else if (number<1048576000){
-        number=number/1048576;
-        var last=Math.round(number*Math.pow(10,round))/Math.pow(10,round)+"M";
-    }else{
-        number=number/1048576000;
-        var last=Math.round(number*Math.pow(10,round))/Math.pow(10,round)+"G";
+        var last = number + "B";
+    } else if (number < 1048576) {
+        number = number / 1024;
+        var last = Math.round(number * Math.pow(10, round)) / Math.pow(10, round) + "K";
+    } else if (number < 1048576000) {
+        number = number / 1048576;
+        var last = Math.round(number * Math.pow(10, round)) / Math.pow(10, round) + "M";
+    } else {
+        number = number / 1048576000;
+        var last = Math.round(number * Math.pow(10, round)) / Math.pow(10, round) + "G";
     }
     return last;
 }
 
 
 
-Date.prototype.format = function(format) {
+Date.prototype.format = function (format) {
     var date = {
         "M+": this.getMonth() + 1,
         "d+": this.getDate(),
@@ -462,7 +523,7 @@ Date.prototype.format = function(format) {
     return format;
 }
 
-function uptimeFormat(str){
+function uptimeFormat(str) {
     var uptime = "";
     var min = parseInt(str) / 60;
     var hours = min / 60;
@@ -470,17 +531,17 @@ function uptimeFormat(str){
     var hours = Math.floor(hours - (days * 24));
     min = Math.floor(min - (days * 60 * 24) - (hours * 60));
 
-    if (days !== 0){
-        if(days == 1){
-            uptime = days+" day ";
+    if (days !== 0) {
+        if (days == 1) {
+            uptime = days + " day ";
         }
-        else{
-            uptime = days+" days ";
+        else {
+            uptime = days + " days ";
         }
     }
-    if (hours !== 0){
-        uptime = uptime+hours+":";
+    if (hours !== 0) {
+        uptime = uptime + hours + ":";
     }
 
-    return uptime=uptime+min;
+    return uptime = uptime + min;
 }
