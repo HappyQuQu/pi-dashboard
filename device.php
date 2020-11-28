@@ -39,6 +39,16 @@ if (($str = @file("/proc/cpuinfo")) !== false){
         if($D['cpu']['count'] == 1){
             $D['cpu']['model'] = $model[1][0].$bogomips[1][0];
         }
+        else if($D['cpu']['count'] == 0){
+            @exec("lscpu",$newArray);
+            #@preg_match_all("[^CPUs(): ]", $newArray[3], $count);
+            #print_r($newArray);
+            $verdorId=substr($newArray[7],11);
+            $modelName=substr($newArray[9],12);
+            $D['cpu']['count']= substr($newArray[2],7);
+            $D['cpu']['model'] = $modelName.' '.$verdorId.'v8 '.$bogomips[1][0].' x'.$D['cpu']['count'];
+
+        }
         else{
             $D['cpu']['model'] = $model[1][0].$bogomips[1][0].' ×'.$D['cpu']['count'];
         }
